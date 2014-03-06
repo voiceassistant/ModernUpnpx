@@ -44,6 +44,9 @@
 
 +(UPnPManager*)GetInstance;
 
+-(id)init;
+-(id)initWithDeviceFactory:(DeviceFactory*)devFactory;
+
 @property(readonly) SSDPDB_ObjC *SSDP;
 @property(readonly) UPnPDB *DB;
 @property(readonly) DeviceFactory* deviceFactory;

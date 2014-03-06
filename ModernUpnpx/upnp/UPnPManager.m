@@ -64,12 +64,12 @@
 	return instance;
 }
 
--(id)init{
+-(id)initWithDeviceFactory:(DeviceFactory*)devFactory{
     self = [super init];
     
     if (self) {
         upnpEvents = [[UPnPEvents alloc] init];
-        deviceFactory = [[DeviceFactory alloc] init];
+        deviceFactory = devFactory;
         SSDP = [[SSDPDB_ObjC alloc] init];
         DB = [[UPnPDB alloc] initWithSSDP:SSDP]; 
         defaultPlaylist = [[MediaPlaylist alloc] init];
@@ -77,8 +77,12 @@
         [SSDP startSSDP];
         [upnpEvents start];
     }
-	
-	return self;
+
+    return self;
+}
+
+-(id)init{
+	return [self initWithDeviceFactory:[[DeviceFactory alloc] init]];
 }
 
 -(void)dealloc{
