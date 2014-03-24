@@ -287,13 +287,11 @@
                     [observer UPnPDBWillUpdate:self];
                 }
 
-                BOOL hasChanges = NO;
                 while( [readyForDescription count] > 0){
                     upnpdevice = [readyForDescription objectAtIndex:0];
                     //fill the upnpdevice with info from the XML
                     int ret = [upnpdevice loadDeviceDescriptionFromXML];
                     if(ret == 0){
-                    	hasChanges = YES;
                         [self lock];
                         //NSLog(@"httpThread upnpdevice, location=%@", [upnpdevice xmlLocation]);
 
@@ -305,11 +303,9 @@
                     
                 }
 
-                if ( hasChanges ) {
-		            for (id<UPnPDBObserver> observer in mObservers) {
-		                [observer UPnPDBUpdated:self];
-		            }
-				}
+	            for (id<UPnPDBObserver> observer in mObservers) {
+	                [observer UPnPDBUpdated:self];
+	            }
             }
             
             sleep(2); //Wait and get signalled @TODO
