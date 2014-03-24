@@ -281,31 +281,35 @@
                 BasicUPnPDevice *upnpdevice;
                 //NSEnumerator *descenum = [readyForDescription objectEnumerator];
                 //while(upnpdevice = [descenum nextObject]){
+                        //Inform the listeners so they know the rootDevices array might change
+
+                for (id<UPnPDBObserver> observer in mObservers) {
+                    [observer UPnPDBWillUpdate:self];
+                }
+
+                BOOL hasChanges = NO;
                 while( [readyForDescription count] > 0){
                     upnpdevice = [readyForDescription objectAtIndex:0];
                     //fill the upnpdevice with info from the XML
                     int ret = [upnpdevice loadDeviceDescriptionFromXML];
                     if(ret == 0){
+                    	hasChanges = YES;
                         [self lock];
                         //NSLog(@"httpThread upnpdevice, location=%@", [upnpdevice xmlLocation]);
 
-                        //Inform the listeners so they know the rootDevices array might change
-                        for (id<UPnPDBObserver> observer in mObservers) {
-                            [observer UPnPDBWillUpdate:self];
-                        }
-
                         //This is the only place we add devices to the rootdevices
                         [rootDevices addObject:upnpdevice];
-                        
-                        for (id<UPnPDBObserver> observer in mObservers) {
-                            [observer UPnPDBUpdated:self];
-                        }
-
                         [self unlock];
                     }
                     [readyForDescription removeObjectAtIndex:0];
                     
-                }				
+                }
+
+                if ( hasChanges ) {
+		            for (id<UPnPDBObserver> observer in mObservers) {
+		                [observer UPnPDBUpdated:self];
+		            }
+				}
             }
             
             sleep(2); //Wait and get signalled @TODO
